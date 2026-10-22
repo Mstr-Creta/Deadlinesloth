@@ -95,8 +95,8 @@ Browser local storage ─────────── task completion checkmar
 ### 1. Get the code and open the project folder
 
 ```bash
-git clone https://github.com/<your-user>/<your-repository>.git
-cd <your-repository>
+git clone https://github.com/Mstr-Creta/Deadlinsloth
+cd Deadlinesloth
 ```
 
 If you already have the project files, open a terminal in the project root instead.
@@ -158,87 +158,6 @@ Open the local URL printed by Vite, normally <http://localhost:5173>.
 - To plan from your own text, make sure Ollama is running and the selected model has been downloaded. Paste text or add a supported file, choose your planning mode, and generate a plan.
 - Mark tasks complete to see the plan’s progress, recent activity, and streak update.
 
-## Vercel deployment
-
-Vercel supports Vite static frontends and FastAPI Python applications. The most straightforward setup for this repository is to create **two Vercel projects connected to the same GitHub repository**: one with the `frontend` root directory and one with the `backend` root directory. Vercel documents automatic FastAPI detection and the Python entrypoint rules in its [FastAPI deployment guide](https://vercel.com/kb/guide/ship-a-fastapi-app-on-vercel) and [Python runtime documentation](https://vercel.com/docs/functions/runtimes/python).
-
-### Important hosted-app requirements
-
-This repository is configured for local development by default. Before the hosted app can call its API:
-
-1. **Set the frontend API address.** In the Vercel frontend project, configure `VITE_API_URL` to the deployed backend origin, for example `https://your-api-project.vercel.app` (no trailing slash). Vite embeds `VITE_` variables at build time, so redeploy after changing it.
-2. **Allow the frontend origin in FastAPI CORS.** `backend/app/main.py` currently allows localhost development origins only. Add the exact deployed frontend origin (for example, `https://your-app.vercel.app`) to `allow_origins` before deploying the backend. Add any production custom domain there too.
-3. **Decide how hosted inference will work.** `OLLAMA_BASE_URL` defaults to `http://localhost:11434`. On Vercel, that points to the function’s own environment, not the user’s computer. Hosted custom-text extraction therefore needs an Ollama server reachable from the deployed backend, or a separate hosted model integration. Never expose an unauthenticated Ollama endpoint publicly. Without a reachable model, demo plans can still work but custom AI planning cannot.
-4. **Choose durable plan storage for real use.** The current backend writes to a local SQLite file. Serverless function filesystems should not be treated as durable, shared database storage; use a hosted persistent database before relying on plan history across deployments or function instances. See [Vercel’s storage options](https://vercel.com/docs/storage) and choose a database supported by the app’s storage layer.
-
-### Deploy the frontend
-
-1. Push the project to GitHub using the instructions in [Upload this project to GitHub with Git Bash](#upload-this-project-to-github-with-git-bash).
-2. In Vercel, choose **Add New → Project** and import the repository.
-3. Set **Root Directory** to `frontend`.
-4. Set the framework to **Vite** if Vercel does not detect it automatically. Use build command `npm run build` and output directory `dist`.
-5. Add `VITE_API_URL` with the backend’s deployed origin. If deploying the backend first, copy its Vercel URL here.
-6. Deploy, then copy the frontend URL for the backend CORS allowlist.
-
-### Deploy the backend
-
-1. Import the same GitHub repository as another Vercel project.
-2. Set **Root Directory** to `backend`. Vercel should detect the Python FastAPI application and its `app/main.py` entrypoint.
-3. Add any required environment variables in the Vercel project settings:
-
-   ```text
-   OLLAMA_MODEL=gemma3:4b
-   OLLAMA_BASE_URL=https://<reachable-and-secured-Ollama-service>
-   ```
-
-   `OLLAMA_BASE_URL` can be omitted only if you accept that custom text planning will not reach Ollama. Do not set it to `localhost` on Vercel. `APP_DB_PATH` only selects a filesystem path and does not make SQLite durable. For a public deployment, update the storage implementation to use a hosted database.
-
-4. Update the backend CORS origins in `backend/app/main.py` to include the frontend deployment URL, then push the change and redeploy.
-5. Deploy the backend and verify `https://<backend-domain>/api/health` and `https://<backend-domain>/docs`.
-6. Set the frontend’s `VITE_API_URL` to that backend origin and redeploy the frontend.
-7. In the deployed UI, try a demo plan first. Then verify custom text generation only after the backend can securely reach the configured model service.
-
-> **Prototype limitation:** This is a deployment guide, not a claim that the current SQLite and local Ollama configuration is production-ready. Vercel’s Python runtime can host FastAPI, but this app’s data and inference settings need production-appropriate services for durable, shared plans and hosted AI.
-
-## Upload this project to GitHub with Git Bash
-
-These instructions assume you create a **new, empty GitHub repository** first. Do not add a README, license, or `.gitignore` on GitHub because this project already contains a README and `.gitignore`.
-
-1. On GitHub, create a repository and copy its HTTPS address, such as `https://github.com/<your-user>/<your-repository>.git`.
-2. Open **Git Bash** and change into this project folder (update the path if you saved it elsewhere):
-
-   ```bash
-   cd "/c/Users/<your-windows-user>/Documents/Codex/2026-10-21/he/outputs/assignment-deadline-sloth"
-   ```
-
-3. Initialize Git and commit the project:
-
-   ```bash
-   git init
-   git add .
-   git status --short
-   git commit -m "Prepare Assignment Deadline Sloth MVP"
-   git branch -M main
-   ```
-
-4. Add your GitHub remote and push:
-
-   ```bash
-   git remote add origin https://github.com/<your-user>/<your-repository>.git
-   git push -u origin main
-   ```
-
-   Replace the example URL with the one GitHub gave you. If `origin` is already configured, check it with `git remote -v` and use `git remote set-url origin <repository-url>` instead of adding it again.
-
-5. Refresh the GitHub repository page. The project files and README should appear. Keep `.env` files, database files, `node_modules`, `.venv`, and build output out of Git; the included `.gitignore` excludes these.
-
-## Privacy and limitations
-
-- The original uploaded file is read in memory for extraction and is not saved as an uploaded file.
-- The generated plan is stored in the backend’s SQLite database; the source text itself is not part of the saved plan record.
-- Task completion checkmarks are stored in browser local storage for each plan. They stay in that browser and are not synchronized to the backend.
-- Local Gemma inference sends the input from the backend to the configured Ollama server. With the default local setup, that server runs on the same computer. A remote hosted Ollama service would receive the text over the network.
-- Extracted dates and effort are suggestions. Review them, especially when the source is ambiguous or incomplete.
 
 ## License
 
