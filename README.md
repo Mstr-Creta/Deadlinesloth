@@ -96,7 +96,7 @@ Browser local storage ─────────── task completion checkmar
 
 ```bash
 git clone https://github.com/Mstr-Creta/Deadlinsloth
-cd Deadlinesloth
+cd Deadlinsloth
 ```
 
 If you already have the project files, open a terminal in the project root instead.
