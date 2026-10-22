@@ -1,0 +1,23 @@
+Sprint Planning Notes - October 21
+
+1. Finish customer onboarding dashboard
+Due: October 27
+Owner: You
+Estimated effort: 10 hours
+Blocked by: final API contract from backend team
+
+2. Prepare quarterly security review deck
+Due: October 30
+Estimated effort: 6 hours
+
+3. Respond to client about phishing simulation results
+Due: October 22
+Estimated effort: 1 hour
+
+4. Update incident response documentation
+Due: November 8
+Estimated effort: 4 hours
+
+5. Review pull requests for authentication module
+No explicit deadline
+Estimated effort: 2 hours

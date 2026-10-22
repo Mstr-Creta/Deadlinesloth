@@ -1,0 +1,24 @@
+Course: CSE 402 - Machine Learning
+
+Assignment 3: Phishing URL Detection using ML
+Due: October 28, 2026
+Requirements:
+- Compare at least three models
+- Include dataset preprocessing and evaluation metrics
+- Submit a 6-page report and GitHub repository
+Estimated effort: 8-10 hours
+
+Quiz 4: Deep Learning Basics
+Date: October 24, 2026
+Topics: CNNs, transfer learning, regularization
+
+Final Project Proposal
+Due: November 5, 2026
+Requirements:
+- Problem statement
+- Dataset plan
+- Baseline model
+- Evaluation strategy
+
+Reading: Attention Is All You Need
+Complete before November 1, 2026
